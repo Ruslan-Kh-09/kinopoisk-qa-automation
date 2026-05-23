@@ -1,0 +1,19 @@
+# Python cached files
+__pycache__/
+*.pyc
+
+# Pytest cache and results
+.pytest_cache/
+.pydantic_cache/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Drivers and binaries
+*.exe
+*.dll
+*.so
+
+# Allure reports temporary folder
+allure-results/
