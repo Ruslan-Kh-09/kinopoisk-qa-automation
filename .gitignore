@@ -9,6 +9,8 @@ __pycache__/
 # IDE settings
 .vscode/
 .idea/
+.venv/
+venv/
 
 # Drivers and binaries
 *.exe
@@ -17,3 +19,6 @@ __pycache__/
 
 # Allure reports temporary folder
 allure-results/
+
+# Secrets (Файл с токенами)
+.env

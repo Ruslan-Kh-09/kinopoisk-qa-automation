@@ -11,22 +11,30 @@ import config
 class MainPage(BasePage):
     """Класс Главной страницы с локаторами элементов интерфейса."""
 
-    # 🔍 Локаторы элементов (Селекторы)
-    SEARCH_INPUT = (By.NAME, "kp_query")
-    SEARCH_BUTTON = (By.CLASS_NAME, "search-form__submit")
-    SUGGEST_WINDOW = (By.CLASS_NAME, "kinopoisk-header-item__suggest")
-    SUGGEST_ITEMS = (By.CLASS_NAME, "suggest-item")
+    # 🔍 Локаторы элементов (Селекторы обновлены под верстку 2026 года)
+    # Используем CSS_SELECTOR и XPATH с относительными путями
+    SEARCH_INPUT = (By.CSS_SELECTOR, "input[placeholder*='Фильмы']")
+    SEARCH_BUTTON = (By.CSS_SELECTOR, "button[type='submit']")
+    SUGGEST_WINDOW = (
+        By.XPATH, "//*[contains(@class, 'suggest') or @role='listbox']"
+    )
+    SUGGEST_ITEMS = (
+        By.XPATH, "//div[contains(@class, 'suggest-item') or @role='option']"
+    )
     LOGIN_BUTTON = (
         By.XPATH, "//button[contains(text(), 'Войти')]"
     )
     TRAILER_PLAY_BUTTON = (
-        By.XPATH, "//button[contains(@class, 'ButtonWatchTrailer')]"
+        By.XPATH, "//button[contains(., 'Трейлер') or contains(., 'трейлер')]"
     )
-    MODAL_PLAYER = (By.CLASS_NAME, "discovery-trailer-player")
+    MODAL_PLAYER = (
+        By.XPATH,
+        "//div[contains(@class, 'player') or contains(@class, 'modal')]"
+    )
 
-    # Продвинутые локаторы для нефункциональных тестов из чек-листов
-    CARD_NUMBER_MASKED = (By.CLASS_NAME, "payment-card__number")
-    FIRST_CONTENT_ELEMENT = (By.CLASS_NAME, "feed-complex-poster")
+    # Стабильные элементы для нефункциональных тестов
+    HEADER_LOGO = (By.CSS_SELECTOR, "a[href='/'] svg, img[alt='Логотип']")
+    FIRST_POSTER = (By.CSS_SELECTOR, "img[class*='poster'], img[class*='image']")
 
     @allure.step("Открыть главную страницу Кинопоиска")
     def open_main_page(self) -> None:

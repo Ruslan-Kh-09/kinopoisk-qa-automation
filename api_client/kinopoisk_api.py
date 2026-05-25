@@ -12,7 +12,7 @@ class KinopoiskAPI:
         """Инициализирует клиент базовым URL и токеном авторизации."""
         self.base_url: str = base_url
 
-        # Безопасно очищаем токен от возможных пробелов по краям
+        # Безопасно очищаем токен от пробелов
         clean_key = str(api_key).strip()
 
         self.headers: Dict[str, str] = {

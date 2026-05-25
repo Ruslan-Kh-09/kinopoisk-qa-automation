@@ -35,7 +35,7 @@ class TestKinopoiskAPI:
         with allure.step("Проверка статус-кода ответа (Ожидается 200 OK)"):
             assert response.status_code == 200
 
-        with allure.step("Проверка структуры (Наличие массива items)"):
+        with allure.step("Проверка структура (Наличие массива items)"):
             json_data = response.json()
             assert "items" in json_data
             assert isinstance(json_data["items"], list)
@@ -54,7 +54,7 @@ class TestKinopoiskAPI:
             json_data = response.json()
             assert "items" in json_data
             if json_data["items"]:
-                first_item = json_data["items"]
+                first_item = json_data["items"][0]
                 assert "filmId" in first_item
                 assert "nameRu" in first_item
 
@@ -83,9 +83,15 @@ class TestKinopoiskAPI:
             assert res_id == config.DEFAULT_FILM_ID
 
     # ==========================================
-    # НЕГАТИВНЫЕ ТЕСТЫ
+    # НЕГАТИВНЫЕ ТЕСТЫ (ПОДПИСАННЫЕ XFAIL НА БАГИ)
     # ==========================================
 
+    @pytest.mark.xfail(
+        reason="BUG-001: Дефект обработки исключений на сервере. "
+               "При отправке метода POST вместо GET эндпоинт падает "
+               "в ошибку 500 Internal Server Error вместо "
+               "возврата легитимного статуса 405 Method Not Allowed."
+    )
     @allure.title("N-01. Некорректный HTTP-метод (POST вместо GET)")
     @allure.story("Валидация ограничений методов на сервере")
     def test_post_instead_of_get_fails(self, api: KinopoiskAPI) -> None:
@@ -121,6 +127,13 @@ class TestKinopoiskAPI:
         with allure.step("Проверка статус-кода ответа (Ожидается 400)"):
             assert response.status_code == 400
 
+    @pytest.mark.xfail(
+        reason="BUG-002: Дефект валидации бизнес-логики. Бэкенд "
+               "полностью пропускает некорректные диапазоны лет "
+               "(год в будущем, отрицательный год, ноль) и "
+               "возвращает статус 200 OK вместо отсечения по коду "
+               "400 Bad Request."
+    )
     @pytest.mark.parametrize("invalid_year, description", [
         (2050, "Год в будущем"),
         (-2025, "Отрицательный год"),
@@ -153,6 +166,12 @@ class TestKinopoiskAPI:
         with allure.step("Проверка статус-кода ответа (Ожидается 400)"):
             assert response.status_code == 400
 
+    @pytest.mark.xfail(
+        reason="BUG-003: Нарушение архитектуры REST API. При "
+               "запросе подресурсов для несуществующего ID фильма "
+               "сервер отдает пустой массив со статусом 200 OK "
+               "вместо легитимного ответа 404 Not Found."
+    )
     @allure.title("N-08. Запрос списка для несуществующего ID")
     @allure.story("Проверка обработки отсутствующих сущностей")
     def test_get_similars_for_non_existent_film_fails(
